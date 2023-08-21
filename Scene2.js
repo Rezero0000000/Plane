@@ -5,7 +5,6 @@ class Scene2 extends Phaser.Scene {
 
   create () {
 
-    
     this.background = this.add.tileSprite(0,0,config.width, config.height, "background");
     this.background.setOrigin(0,0);
 
@@ -81,9 +80,15 @@ class Scene2 extends Phaser.Scene {
       this.player.y += 2;
     }
 
-    if (this.spaceBar.isDown) {
-      console.log("beem")
+    if (Phaser.Input.Keyboard.JustDown(this.spaceBar)) {
+      this.shotBeam()
     }
+  }
+  
+  shotBeam () {
+    var beam = new Beam (this)
+
+   // this.beam = this.physics.add.sprite(this.player.x, this.player.y, "beam")
   }
 
   update () {

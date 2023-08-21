@@ -36,9 +36,9 @@ class Scene1 extends Phaser.Scene {
       frameHeight: 24
     })
 
-    this.load.spritesheet("player", "./assets/spritesheets/.png", {
+    this.load.spritesheet("beam", "./assets/spritesheets/beam.png", {
       frameWidth: 16,
-      frameHeight: 24
+      frameHeight: 16
     })
   }
 
@@ -98,7 +98,13 @@ class Scene1 extends Phaser.Scene {
       frameRate: 20,
       repeat: -1
     })
-
+  
+    this.anims.create({
+      key: "beam_anim",
+      frames: this.anims.generateFrameNumbers("beam"),
+      frameRate: 20,
+      repeat: -1,
+    })
 
     this.add.text(20, 20, "Loading Game");
     this.scene.start("bootGame")
