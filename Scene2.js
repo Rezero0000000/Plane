@@ -22,6 +22,7 @@ class Scene2 extends Phaser.Scene {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys()
     this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+    this.projectTiles = this.add.group();
 
   
     this.powerUps = this.physics.add.group()
@@ -84,11 +85,9 @@ class Scene2 extends Phaser.Scene {
       this.shotBeam()
     }
   }
-  
+  // tes
   shotBeam () {
     var beam = new Beam (this)
-
-   // this.beam = this.physics.add.sprite(this.player.x, this.player.y, "beam")
   }
 
   update () {
@@ -96,6 +95,9 @@ class Scene2 extends Phaser.Scene {
     this.moveShip(this.ship2, 2)
     this.moveShip(this.ship3, 3)
 
+    for (let i = 0; i < this.projectTiles.getChildren().length; i++) {
+      this.projectTiles.getChildren()[i].update;
+    }
     this.background.tilePositionY -= 0.5
     this.controlPlayer()
   }
