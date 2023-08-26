@@ -4,6 +4,20 @@ class Scene2 extends Phaser.Scene {
   }
 
   create () {
+    this.beamSound = this.sound.add("audio_beam");
+    this.explosionSound = this.sound.add("audio_explosion");
+    this.music = this.sound.add("music");
+
+    var musicConfig = {
+      mute: false,
+      volume: 1,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: false,
+      delay: 0
+    }
+    this.music.play(musicConfig);
 
     this.background = this.add.tileSprite(0,0,config.width, config.height, "background");
     this.background.setOrigin(0,0);
@@ -62,22 +76,37 @@ class Scene2 extends Phaser.Scene {
     this.enemies.add(this.ship2)
     this.enemies.add(this.ship3)
     
-    this.physics.add.overlap(this.player, this.powerUps, function (player, enemy) {
-      this.resetShipPos(enemy)
-      player.x = config.width / 2 - 8
-      player.y = config.height - 64 
+    this.physics.add.overlap(this.player, this.enemies, function (player, enemy) { 
+      this.resetShipPos(enemy);
+
+      if(this.player.alpha < 1){
+          return;
+      }
+
+      var explosion = new Explosion(this, player.x, player.y);
+      player.disableBody(true, true);
+      this.time.addEvent({
+        delay: 1000,
+        callback: this.resetPlayer,
+        callbackScope: this,
+        loop: false
+      });
     }, null, this)
 
     this.physics.add.overlap(this.projectTiles, this.enemies, function (beam, enemy) {
+      var explosion = new Explosion (this, enemy.x, enemy.y)
+
       beam.destroy()
       this.resetShipPos(enemy)
       this.score += 15;
 
       var scoreFormated = this.zeroPad(this.score, 6);
       this.scoreLabel.text = "SCORE " + scoreFormated;
+      this.explosionSound.play();
     }, null, this)
 
     var graphics = this.add.graphics();
+
     graphics.fillStyle(0x000000, 1);
     graphics.beginPath();
     graphics.moveTo(0, 0);
@@ -89,18 +118,20 @@ class Scene2 extends Phaser.Scene {
     graphics.closePath();
     graphics.fillPath();
 
-
     this.score = 0;
     var scoreFormated = this.zeroPad(this.score, 6);
     this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "SCORE " + scoreFormated  , 16);
-  }
   
+  }
+
   zeroPad(number, size){
-      var stringNumber = String(number);
-      while(stringNumber.length < (size || 2)){
-        stringNumber = "0" + stringNumber;
-      }
-      return stringNumber;
+    var stringNumber = String(number);
+     
+    while(stringNumber.length < (size || 2)){
+      stringNumber = "0" + stringNumber;
+    }
+
+    return stringNumber;
   }
 
   destroyShip (pointer, gameObject) {
@@ -115,6 +146,26 @@ class Scene2 extends Phaser.Scene {
     }
   }
   
+  resetPlayer(){
+    var x = config.width / 2 - 8;
+    var y = config.height + 64;
+    this.player.enableBody(true, x, y, true, true);
+
+    this.player.alpha = 0.5;
+    
+    var tween = this.tweens.add({
+      targets: this.player,
+      y: config.height - 64,
+      ease: 'Power1',
+      duration: 1500,
+      repeat:0,
+      onComplete: function(){
+        this.player.alpha = 1;
+      },
+      callbackScope: this
+    });
+  }
+
   resetShipPos (ship) {
     ship.y = 0;
     ship.x = Phaser.Math.Between(0, config.width)
@@ -138,9 +189,10 @@ class Scene2 extends Phaser.Scene {
       this.shotBeam()
     }
   }
-  // tes
+  
   shotBeam () {
     var beam = new Beam (this)
+    this.beamSound.play();
   }
 
   update () {
@@ -155,4 +207,3 @@ class Scene2 extends Phaser.Scene {
     this.controlPlayer()
   }
 }
-
