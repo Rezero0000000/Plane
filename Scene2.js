@@ -43,6 +43,14 @@ class Scene2 extends Phaser.Scene {
       powerUp.setBounce(1)
     }
 
+    this.physics.add.collider(this.projectTiles, this.powerUps, function (projectTiles, powerUps) {
+      projectTiles.destroy();
+    })
+
+    this.physics.add.overlap(this.player, this.powerUps, function (player, powerUp) {
+        powerUp.disableBody(true, true)
+    }, this.hitPowerUp, null, this)
+
     this.input.on('gameobjectdown', this.destroyShip, this)
 
     this.add.text(20, 20, "Playing Game", {
@@ -52,6 +60,22 @@ class Scene2 extends Phaser.Scene {
     this.ship1.play("ship1_anim")
     this.ship2.play("ship2_anim")
     this.ship3.play("ship3_anim")
+
+    this.enemies = this.physics.add.group()
+    this.enemies.add(this.ship1)
+    this.enemies.add(this.ship2)
+    this.enemies.add(this.ship3)
+    
+    this.physics.add.overlap(this.player, this.powerUps, function (player, enemy) {
+      this.resetShipPos(enemy)
+      player.x = config.width / 2 - 8
+      player.y = config.height - 64 
+    }, null, this)
+
+    this.physics.add.overlap(this.projectTiles, this.enemies, function (beam, enemy) {
+      beam.destroy()
+      this.resetShipPos(enemy)
+    }, null, this)
   }
 
   destroyShip (pointer, gameObject) {
@@ -62,9 +86,13 @@ class Scene2 extends Phaser.Scene {
   moveShip (ship, speed) {
     ship.y += speed;
     if (ship.y > config.height) {
-      ship.y = 0;
-      ship.x = Phaser.Math.Between(0, config.width)
+      this.resetShipPos(ship)
     }
+  }
+  
+  resetShipPos (ship) {
+    ship.y = 0;
+    ship.x = Phaser.Math.Between(0, config.width)
   }
 
   controlPlayer () {
