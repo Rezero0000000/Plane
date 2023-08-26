@@ -52,10 +52,6 @@ class Scene2 extends Phaser.Scene {
     }, this.hitPowerUp, null, this)
 
     this.input.on('gameobjectdown', this.destroyShip, this)
-
-    this.add.text(20, 20, "Playing Game", {
-      font: "25px Arial"
-    })
     
     this.ship1.play("ship1_anim")
     this.ship2.play("ship2_anim")
@@ -75,7 +71,36 @@ class Scene2 extends Phaser.Scene {
     this.physics.add.overlap(this.projectTiles, this.enemies, function (beam, enemy) {
       beam.destroy()
       this.resetShipPos(enemy)
+      this.score += 15;
+
+      var scoreFormated = this.zeroPad(this.score, 6);
+      this.scoreLabel.text = "SCORE " + scoreFormated;
     }, null, this)
+
+    var graphics = this.add.graphics();
+    graphics.fillStyle(0x000000, 1);
+    graphics.beginPath();
+    graphics.moveTo(0, 0);
+    graphics.lineTo(config.width, 0);
+    graphics.lineTo(config.width, 20);
+    graphics.lineTo(0, 20);
+    graphics.lineTo(0, 0);
+    
+    graphics.closePath();
+    graphics.fillPath();
+
+
+    this.score = 0;
+    var scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "SCORE " + scoreFormated  , 16);
+  }
+  
+  zeroPad(number, size){
+      var stringNumber = String(number);
+      while(stringNumber.length < (size || 2)){
+        stringNumber = "0" + stringNumber;
+      }
+      return stringNumber;
   }
 
   destroyShip (pointer, gameObject) {
