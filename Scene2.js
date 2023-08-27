@@ -30,10 +30,6 @@ class Scene2 extends Phaser.Scene {
     this.player.play("player_anim")
     this.player.setCollideWorldBounds()
 
-    this.ship1.setInteractive()
-    this.ship2.setInteractive()
-    this.ship3.setInteractive()
-
     this.cursorKeys = this.input.keyboard.createCursorKeys()
     this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     this.projectTiles = this.add.group();
@@ -65,8 +61,6 @@ class Scene2 extends Phaser.Scene {
         powerUp.disableBody(true, true)
     }, this.hitPowerUp, null, this)
 
-    this.input.on('gameobjectdown', this.destroyShip, this)
-    
     this.ship1.play("ship1_anim")
     this.ship2.play("ship2_anim")
     this.ship3.play("ship3_anim")
@@ -132,11 +126,6 @@ class Scene2 extends Phaser.Scene {
     }
 
     return stringNumber;
-  }
-
-  destroyShip (pointer, gameObject) {
-    gameObject.setTexture("explosion")
-    gameObject.play("explode")
   }
 
   moveShip (ship, speed) {
