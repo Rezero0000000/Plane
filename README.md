@@ -2,7 +2,7 @@
 Space shooter game build with phaser.js
 
 ## Screenshot
-<img src="./Screenshot.png" width="170">
+<img src="./Screenshot.png" width="200">
 
 ## Control
 Space: Shoot
